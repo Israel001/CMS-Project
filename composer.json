@@ -1,0 +1,21 @@
+{
+    "name": "israe/israe",
+    "require": {
+        "phpmailer/phpmailer": "^6.0",
+        "pusher/pusher-php-server": "^3.1",
+        "vlucas/phpdotenv": "^2.5"
+    },
+    
+    "autoload": {
+        "classmap": [
+            "classes"
+        ]
+    },
+    
+    "authors": [
+        {
+            "name": "Israel Obanijesu",
+            "email": "israelobanijesu2@gmail.com"
+        }
+    ]
+}
