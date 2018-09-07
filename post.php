@@ -253,6 +253,7 @@
         <hr>
 
         <?php include "includes/footer.php"; ?>
+
         <script>
             var postId = <?php echo $postId; ?>;
             var userId = <?php echo loggedInUserId(); ?>;
@@ -260,24 +261,30 @@
                 $("[data-toggle='tooltip']").tooltip();
                 $('.like').click(function(){
                     $.ajax({
-                        url: "/CMS Project/post.php?id="+postId+"",
+                        url: "post.php?id="+postId+"",
                         type: 'post',
                         data: {
                             'liked': 1,
                             'post_id': postId,
                             'user_id': userId
+                        },
+                        success: function(){
+                            location.reload(true);
                         }
                     });
                 });
-                
+
                 $('.unlike').click(function(){
                     $.ajax({
-                        url: "/CMS Project/post.php?id="+postId+"",
+                        url: "post.php?id="+postId+"",
                         type: 'post',
                         data: {
                             'unliked': 1,
                             'post_id': postId,
                             'user_id': userId
+                        },
+                        success: function(){
+                            location.reload(true);
                         }
                     });
                 });

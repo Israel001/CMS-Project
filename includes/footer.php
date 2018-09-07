@@ -14,10 +14,10 @@
     <!-- /.container -->
 
     <!-- jQuery -->
-    <script src="/CMS Project/js/jquery.js"></script>
+    <script src="js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="/CMS Project/js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 
 </body>
 

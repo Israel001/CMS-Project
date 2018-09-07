@@ -24,7 +24,10 @@ function redirect($location){
 function query($query){
     global $connection;
     $result = mysqli_query($connection, $query);
-    return confirm_query($result);
+    if(confirm_query($result)){
+        return $result;
+    }
+    return false;
 }
 
 function isMethod($method=null){
@@ -140,6 +143,7 @@ function confirm_query($query){
     if(!$query){
         die("QUERY FAILED. ".mysqli_error($connection));
     }
+    return true;
 }
 
 function add_categories(){

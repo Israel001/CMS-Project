@@ -46,7 +46,7 @@ if(isMethod('post')){
                     $mail->isHTML(true); //Set email format to HTML
                     $mail->Subject = 'This is a test email';
                     $mail->Body = '<p>Please click to reset your password
-                    <a href="http://localhost:8080/CMS Project/reset.php?email='.$email.'&token='.$token.'">
+                    <a href="http://localhost:8080/CMS Project/change_password.php?email='.$email.'&token='.$token.'">
                     Reset Password
                     </a>
                     </p>
