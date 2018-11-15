@@ -238,11 +238,13 @@ class ParagonIE_Sodium_Compat
         if (ParagonIE_Sodium_Core_Util::strlen($ciphertext) < self::CRYPTO_AEAD_AES256GCM_ABYTES) {
             throw new SodiumException('Message must be at least CRYPTO_AEAD_AES256GCM_ABYTES long');
         }
-
-        if (!self::crypto_aead_aes256gcm_is_available()) {
-            throw new SodiumException('AES-256-GCM is not available');
+        if (!is_callable('openssl_decrypt')) {
+            throw new SodiumException('The OpenSSL extension is not installed, or openssl_decrypt() is not available');
         }
+
+        /** @var string $ctext */
         $ctext = ParagonIE_Sodium_Core_Util::substr($ciphertext, 0, -self::CRYPTO_AEAD_AES256GCM_ABYTES);
+        /** @var string $authTag */
         $authTag = ParagonIE_Sodium_Core_Util::substr($ciphertext, -self::CRYPTO_AEAD_AES256GCM_ABYTES, 16);
         return openssl_decrypt(
             $ctext,
@@ -293,6 +295,11 @@ class ParagonIE_Sodium_Compat
         if (ParagonIE_Sodium_Core_Util::strlen($key) !== self::CRYPTO_AEAD_AES256GCM_KEYBYTES) {
             throw new SodiumException('Key must be CRYPTO_AEAD_AES256GCM_KEYBYTES long');
         }
+
+        if (!is_callable('openssl_encrypt')) {
+            throw new SodiumException('The OpenSSL extension is not installed, or openssl_encrypt() is not available');
+        }
+
         $authTag = '';
         $ciphertext = openssl_encrypt(
             $plaintext,
@@ -1003,6 +1010,9 @@ class ParagonIE_Sodium_Compat
         }
         if (self::use_fallback('crypto_box_keypair')) {
             return (string) call_user_func('\\Sodium\\crypto_box_keypair');
+        }
+        if (PHP_INT_SIZE === 4) {
+            return ParagonIE_Sodium_Crypto32::box_keypair();
         }
         return ParagonIE_Sodium_Crypto::box_keypair();
     }

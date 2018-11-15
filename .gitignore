@@ -1,2 +1,6 @@
 .env
 /classes/config.php
+/config.php
+/vendor
+/GoogleAPI
+/Facebook

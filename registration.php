@@ -16,7 +16,7 @@
     $dotenv->load();
     
     $options = array(
-        'cluster' => 'ap1',
+        'cluster' => 'apl',
         'encrypted' => true
     );
 
@@ -29,7 +29,11 @@
         $lastname = trim($_POST['lastname']);
         $email = trim($_POST['email']);
         $username = trim($_POST['username']);
-        //$password = trim($_POST['password']);
+
+        $_SESSION['firstname'] = $firstname;
+        $_SESSION['lastname'] = $lastname;
+        $_SESSION['email'] = $email;
+        $_SESSION['username'] = $username;
         
         $error = [
             
@@ -58,13 +62,19 @@
         }
         
         if(empty($error)){
-            registration($firstname, $lastname, $username, $email);
-            
-            $data['message'] = $username;
-            
-            $pusher->trigger('notifications', 'new_user', $data);
-            
-            $message = "Registration Completed Successfully. The first character of your Username is now in Capital Letter. <a href='index.php'>Login?</a>";
+            if (registration($firstname, $lastname, $username, $email)) {
+
+                unset($_SESSION['firstname']);
+                unset($_SESSION['lastname']);
+                unset($_SESSION['username']);
+                unset($_SESSION['email']);
+
+                $data['message'] = $username;
+
+                $pusher->trigger('notifications', 'new_user', $data);
+
+                $message = "Registration Completed Successfully. Please check your Email.";
+            }
         }
         
     } else {
@@ -87,22 +97,22 @@
                       <h6 class="text-center"><?php echo $message; ?></h6>
                        <div class="form-group">
                             <label for="firstname" class="sr-only">Firstname</label>
-                            <input type="text" name="firstname" required id="firstname" class="form-control" placeholder="Enter Your Firstname" autocomplete="on" value="<?php echo isset($firstname) ? $firstname : ''; ?>">
+                            <input type="text" name="firstname" required id="firstname" class="form-control" placeholder="Enter Your Firstname" autocomplete="on" value="<?php echo isset($_SESSION['firstname']) ? $_SESSION['firstname'] : ''; ?>">
                            <p><?php echo isset($error['firstname']) ? $error['firstname'] : ''; ?></p>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="sr-only">Lastname</label>
-                            <input type="text" name="lastname" required id="lastname" class="form-control" placeholder="Enter Your Lastname" autocomplete="on" value="<?php echo isset($lastname) ? $lastname : ''; ?>">
+                            <input type="text" name="lastname" required id="lastname" class="form-control" placeholder="Enter Your Lastname" autocomplete="on" value="<?php echo isset($_SESSION['lastname']) ? $_SESSION['lastname'] : ''; ?>">
                             <p><?php echo isset($error['lastname']) ? $error['lastname'] : ''; ?></p>
                         </div>
                         <div class="form-group">
                             <label for="username" class="sr-only">Username</label>
-                            <input type="text" name="username" required id="username" class="form-control" placeholder="Enter Desired Username" autocomplete="on" value="<?php echo isset($username) ? $username : ''; ?>">
+                            <input type="text" name="username" required id="username" class="form-control" placeholder="Enter Desired Username" autocomplete="on" value="<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : ''; ?>">
                             <p><?php echo isset($error['username']) ? $error['username'] : ''; ?></p>
                         </div>
                          <div class="form-group">
                             <label for="email" class="sr-only">Email</label>
-                            <input type="email" name="email" required id="email" class="form-control" placeholder="somebody@example.com" autocomplete="on" value="<?php echo isset($email) ? $email : ''; ?>">
+                            <input type="email" name="email" required id="email" class="form-control" placeholder="somebody@example.com" autocomplete="on" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>">
                         </div>
 <!--                         <div class="form-group">-->
 <!--                            <label for="password" class="sr-only">Password</label>-->
@@ -132,15 +142,15 @@
             return;
         }
         if(window.XMLHttpRequest){
-            var xmlhttp = new XMLHttpRequest();
+            let xmlhttp = new XMLHttpRequest();
         } else {
-            var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            let xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
         xmlhttp.onreadystatechange = function(){
             if(this.readyState == 4 && this.status == 200){
                 document.getElementById("livecheck").innerHTML = this.responseText;
             }
-        }
+        };
         xmlhttp.open("GET", "livecheck.php?q="+str, true);
         xmlhttp.send();
     }

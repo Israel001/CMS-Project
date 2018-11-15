@@ -74,7 +74,7 @@
                     <p class="lead">
                         by <a href="author_posts.php?author=<?php echo $postAuthor; ?>&id=<?php echo $postId; ?>"><?php echo $postAuthor; ?></a>
                     </p>
-                    <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate; ?> at <?php echo date("h:ia"); ?></p>
+                    <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate ?> </p>
                     <hr>
                     
                     <a href="post.php?id=<?php echo $postId; ?>">

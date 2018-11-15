@@ -87,7 +87,7 @@
                     <p class="lead">
                         by <a href="index.php"><?php echo $postAuthor; ?></a>
                     </p>
-                    <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $postDate; ?> at 10:00 PM</p>
+                    <p><span class="glyphicon glyphicon-time"></span> Posted on <?php $postDate ?></p>
                     <hr>
                     <img class="img-responsive" src="images/<?php echo image_placeholder($postImage); ?>" alt="">
                     <hr>

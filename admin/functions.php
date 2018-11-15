@@ -54,6 +54,41 @@ function loggedInUserId(){
     }
 }
 
+function loggedInUserRole($email){
+    $result = query("SELECT user_role FROM users WHERE user_email = '{$email}'");
+    $row = mysqli_fetch_assoc($result);
+    $userRole = $row['user_role'];
+    return mysqli_num_rows($result) > 0 ? $userRole : false;
+}
+
+function loggedInUserName($email){
+    $result = query("SELECT username FROM users WHERE user_email = '{$email}'");
+    $row = mysqli_fetch_assoc($result);
+    $userName = $row['username'];
+    return mysqli_num_rows($result) > 0 ? $userName : false;
+}
+
+function loggedInUserFirstName($email){
+    $result = query("SELECT user_firstname FROM users WHERE user_email = '{$email}'");
+    $row = mysqli_fetch_assoc($result);
+    $userFirstName = $row['user_firstname'];
+    return mysqli_num_rows($result) > 0 ? $userFirstName : false;
+}
+
+function loggedInUserLastName($email){
+    $result = query("SELECT user_lastname FROM users WHERE user_email = '{$email}'");
+    $row = mysqli_fetch_assoc($result);
+    $userLastName = $row['user_lastname'];
+    return mysqli_num_rows($result) > 0 ? $userLastName : false;
+}
+
+function loggedInUserPassword($email){
+    $result = query("SELECT user_password FROM users WHERE user_email = '{$email}'");
+    $row = mysqli_fetch_assoc($result);
+    $userPassword = $row['user_role'];
+    return mysqli_num_rows($result) > 0 ? $userPassword : false;
+}
+
 function userLikedThisPost($postId){
     global $connection;
     $userId = loggedInUserId();
@@ -92,15 +127,18 @@ function isadmin(){
 }
 
 function email_exist($email){
-    global $connection;
-    $query = "SELECT * FROM users WHERE user_email = '{$email}'";
-    $result = mysqli_query($connection, $query);
-    confirm_query($result);
-    if(mysqli_num_rows($result) > 0){
-        return true;
-    } else {
-        return false;
-    }
+    $result = query("SELECT * FROM users WHERE user_email = '{$email}'");
+    return mysqli_num_rows($result) > 0 ? true : false;
+}
+
+function username_exist($username){
+    $result = query("SELECT * FROM users WHERE username = '{$username}'");
+    return mysqli_num_rows($result) > 0 ? true : false;
+}
+
+function token_exist($token){
+    $result = query("SELECT * FROM users WHERE token = '{$token}'");
+    return mysqli_num_rows($result) > 0 ? true : false;
 }
 
 function escape($string){
@@ -220,7 +258,8 @@ function single_record_count_with_condition($column1, $table, $column2, $conditi
     $query = "SELECT ".$column1." FROM ".$table." WHERE ".$column2." = '{$condition}'";
     $result = mysqli_query($connection, $query);
     confirm_query($result);
-    return implode("", fetchRecords($result));
+    $row = mysqli_num_rows($result) > 0 ? fetchRecords($result) : '';
+    return implode("", $row);
 }
 
 function generatePassword(){
@@ -259,7 +298,7 @@ function generatePassword(){
     }
     $numbers = implode("", randomNumbers(50, 100, 10));
     $password = $pass.$numbers;
-    return strtolower($password);
+    return strtolower(str_shuffle($password));
 }
 
 function randomNumbers($min, $max, $length){
@@ -270,41 +309,43 @@ function randomNumbers($min, $max, $length){
 
 function sendEmailForPassword($email, $password){
     global $connection;
-    if (email_exist($email)) {
-        $token = bin2hex(openssl_random_pseudo_bytes(50));
-        if($stmt = mysqli_prepare($connection, "UPDATE users SET token = '{$token}' WHERE user_email = ?")){
-            mysqli_stmt_bind_param($stmt, "s", $email);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
+    $token = bin2hex(openssl_random_pseudo_bytes(50));
+    if($stmt = mysqli_prepare($connection, "UPDATE users SET token = '{$token}' WHERE user_email = ?")) {
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
 
-            $mail = new PHPMailer(true);
-            try{
-                $mail->SMTPDebug = 0;
-                $mail->isSMTP();
-                $mail->Host = Config::SMTP_HOST;
-                $mail->SMTPAuth = true;
-                $mail->Username = Config::SMTP_USER;
-                $mail->Password = Config::SMTP_PASS;
-                $mail->Port = Config::SMTP_PORT;
-                $mail->SMTPSecure = "ssl";
-                $mail->CharSet = "UTF-8";
+        $mail = new PHPMailer(true);
+        try {
+            $mail->SMTPDebug = 0;
+            $mail->isSMTP();
+            $mail->Host = Config::SMTP_HOST;
+            $mail->SMTPAuth = true;
+            $mail->Username = Config::SMTP_USER;
+            $mail->Password = Config::SMTP_PASS;
+            $mail->Port = Config::SMTP_PORT;
+            $mail->SMTPSecure = "tls"; //ssl
+            $mail->CharSet = "UTF-8";
 
-                $mail->setFrom(Config::SMTP_USER, 'Israel Obanijesu');
-                $mail->addAddress($email);
+            $mail->setFrom(Config::SMTP_USER, 'Israel Obanijesu');
+            $mail->addAddress($email);
 
-                $mail->isHTML(true);
-                $mail->Subject = "Your password";
-                $mail->Body = '<p> Password: '.$password.' <br> <br> Click here to change your password before you can login
-                                    <a href="http://localhost:8080/CMS Project/change_password.php?email='.$email.'&token='.$token.'">
-                                        Change password                                    
-                                    </a> </p>';
-                $mail->send();
-                $_SESSION['mailSent'] = true;
-            } catch (Exception $e){
-                echo 'Message could not be sent. Mailer Error: '.$mail->ErrorInfo;
-            }
+            $mail->isHTML(true);
+            $mail->Subject = "Your password";
+            $mail->Body = '<p> Password: ' . $password . ' <br> <br> Click here to change your password before you can login
+                                <a href="http://localhost:8080/CMS Project/change_password.php?email=' . $email . '&token=' . $token . '">
+                                    <button style="background-color: #337ab7; border-radius: 6px; font-size: 14px; padding: 6px 12px; text-align: center; font-weight: 400; cursor: pointer; border-color: #2e6da4; margin-bottom: 0; white-space: nowrap; touch-action: manipulation; user-select: none;">Change password</button>                                    
+                                </a> </p>';
+            $mail->send();
+            $_SESSION['mailSent'] = true;
+            return true;
+        } catch (Exception $e) {
+            echo 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
+            return false;
         }
     }
+    $_SESSION['mailSent'] = false;
+    return false;
 }
 
 function registration($firstname, $lastname, $username, $email){
@@ -329,14 +370,8 @@ function registration($firstname, $lastname, $username, $email){
 
     $username = ucfirst($username);
 
-    $query = "SELECT * FROM users";
-    $result = mysqli_query($connection, $query);
-    while ($row = mysqli_fetch_assoc($result)){
-        $db_username = $row['username'];
-        $db_email = $row['user_email'];
-    }
-
-    if($username == $db_username){
+    if(username_exist($username)){
+        unset($_SESSION['db_username']);
         ?>
         <script>
             alert("Username Already Exist");
@@ -344,11 +379,11 @@ function registration($firstname, $lastname, $username, $email){
         </script>
         <?php
         die();
-    } elseif($email == $db_email){
+    } elseif(email_exist($email)){
         ?>
         <script>
-            alert("Email Already Exist <a href='index.php'>Login?</a>");
-            //window.location = "registration.php";
+            alert("Email Already Exist");
+            window.location = "registration.php";
         </script>
         <?php
         die();
@@ -360,14 +395,17 @@ function registration($firstname, $lastname, $username, $email){
         query($query);
 
         sendEmailForPassword($email, $password);
+
+        return true;
     }
 }
 
 function checkToken($username){
-    if (single_record_count_with_condition("token", "users", "username", $username) > 0) {
-        return true;
-    }
-    return false;
+    return single_record_count_with_condition("token", "users", "username", $username) ? true : false;
+}
+
+function checkTokenForEmail($email){
+    return single_record_count_with_condition("token", "users", "user_email", $email) ? true : false;
 }
 
 function login($username, $password){
@@ -416,6 +454,12 @@ function login($username, $password){
                 </script>
                 <?php
             }
+        } else {
+            ?>
+            <script>
+                alert("Your account is not active. Please verify your email")
+            </script>
+            <?php
         }
     } else {
         ?>

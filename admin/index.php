@@ -304,15 +304,22 @@
 <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
 <script>
     $(document).ready(function(){
-        var pusher = new Pusher('520861f28781c7215a30', {
+        let pusher = new Pusher('520861f28781c7215a30', {
             cluster: 'ap1',
             encrypted: true
         });
         
-        var notificationChannel = pusher.subscribe('notifications');
+        let notificationChannel = pusher.subscribe('notifications');
         
         notificationChannel.bind('new_user', function(notification){
-            var message = notification.message;
+            let message = notification.message;
+            toastr.options.closeButton = true;
+            toastr.options.closeMethod = 'fadeOut';
+            toastr.options.closeDuration = 300;
+            toastr.options.closeEasing = 'linear';
+            toastr.options.newestOnTop = false;
+            toastr.options.onCloseClick = function() {console.log("close button clicked"); };
+            toastr.options.extendedTimeOut = 60;
             toastr.success(`${message} just registered`);
             console.log(message);
         });

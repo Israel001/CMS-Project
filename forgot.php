@@ -35,7 +35,7 @@ if(isMethod('post')){
                     $mail->Username = Config::SMTP_USER; //SMTP username
                     $mail->Password = Config::SMTP_PASS; //SMTP password
                     $mail->Port = Config::SMTP_PORT; //TCP port to connect to
-                    $mail->SMTPSecure = "ssl"; //Enable SSL encryption
+                    $mail->SMTPSecure = "tls"; //Enable TLS encryption
                     $mail->Charset = "UTF-8";
                     
                     //Recipients
@@ -44,10 +44,10 @@ if(isMethod('post')){
                     
                     //Content
                     $mail->isHTML(true); //Set email format to HTML
-                    $mail->Subject = 'This is a test email';
+                    $mail->Subject = 'Reset password';
                     $mail->Body = '<p>Please click to reset your password
                     <a href="http://localhost:8080/CMS Project/change_password.php?email='.$email.'&token='.$token.'">
-                    Reset Password
+                    <button style="background-color: #337ab7; border-radius: 6px; font-size: 14px; padding: 6px 12px; text-align: center; font-weight: 400; cursor: pointer; border-color: #2e6da4; margin-bottom: 0; white-space: nowrap; touch-action: manipulation; user-select: none;">Reset password</button>
                     </a>
                     </p>
                     ';
@@ -81,9 +81,6 @@ if(isMethod('post')){
                                 <h2 class="text-center">Forgot Password?</h2>
                                 <p>You can reset your password here.</p>
                                 <div class="panel-body">
-
-
-
 
                                     <form id="register-form" role="form" autocomplete="off" class="form" method="post">
 

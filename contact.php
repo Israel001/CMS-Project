@@ -13,7 +13,7 @@
         $subject = wordwrap($_POST['subject'], 70);
         $body = $_POST['body'];
         $header = "From: " .$_POST['email'];
-        
+        //Sending email using PHP default function (this will only work when the website is live)
         mail($to, $subject, $body, $header);
     }
 ?>
@@ -69,7 +69,7 @@
             if(this.readyState == 4 && this.status == 200){
                 document.getElementById("livecheck").innerHTML = this.responseText;
             }
-        }
+        };
         xmlhttp.open("GET", "livecheck.php?q="+str, true);
         xmlhttp.send();
     }

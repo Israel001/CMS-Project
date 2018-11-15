@@ -3,12 +3,19 @@
 
 <?php
 
+require_once "config.php";
+
+$url = $client->createAuthUrl();
+
+$redirectUrl = "http://localhost:8080/CMS%20Project/callback.php";
+$permissions = ['email'];
+$fbUrl = $helper->getLoginUrl($redirectUrl, $permissions);
+
 checkLoggedInAndRedirect('CMS Project/admin');
 
 if(isMethod('post')){
     if(isset($_POST['username']) && isset($_POST['password'])){
         login($_POST['username'], $_POST['password']);
-        //redirect('admin');
     } else {
         redirect('login.php');
     }
@@ -56,10 +63,8 @@ if(isMethod('post')){
 									</div>
 
 									<div class="form-group">
-
 										<input name="login" class="btn btn-lg btn-primary btn-block" value="Login" type="submit">
-									</div>
-
+                                    </div>
 
 								</form>
 
@@ -68,6 +73,8 @@ if(isMethod('post')){
 						</div>
 					</div>
 				</div>
+                <input type="button" onclick="window.location = '<?php echo $url; ?>'" value="Login With Google" class="btn btn-lg btn-danger btn-block"><br>
+                <input type="button" onclick="window.location = '<?php echo $fbUrl; ?>'" value="Login With Facebook" class="btn btn-lg btn-primary btn-block">
 			</div>
 		</div>
 	</div>

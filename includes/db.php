@@ -12,7 +12,7 @@ foreach($db as $key => $value){
 $connection = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 
 if($connection->connect_error){
-    die("Connection Failed: ".connect_error());
+    die("Connection Failed: ".mysqli_connect_error());
 }
 
 $query = "SET NAMES utf8";

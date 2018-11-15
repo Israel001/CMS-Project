@@ -16,13 +16,11 @@
                 <ul class="nav navbar-nav">
                 
                 <?php
-                    $query = "SELECT * FROM categories";
+                    $query = "SELECT * FROM categories LIMIT 5";
                     $result = mysqli_query($connection, $query);
                     while($row = mysqli_fetch_assoc($result)){
                         $categoryId = $row['cat_id'];
                         $categoryTitle = $row['cat_title'];
-                        
-                        //$index_class = '';
                         
                         $category_class = '';
                         
@@ -36,12 +34,6 @@
                             $category_class = 'active';
                         } else {
                             switch($pagename){
-                                /*case 'index.php':
-                                    //$index_class = 'active';
-                                    $registration_class = '';
-                                    $contact_class = '';
-                                break;*/
-                                    
                                 case 'registration.php':
                                     $registration_class = 'active';
                                     //$index_class = '';
@@ -76,12 +68,12 @@
                 <li>
                     <a href="login.php">Login</a>
                 </li>
-                
-                <?php endif; ?>
-                
+
                 <li class="<?php echo $registration_class;?>">
                     <a href="registration.php">Sign Up</a>
                 </li>
+                
+                <?php endif; ?>
                 
                 <li class="<?php echo $contact_class; ?>">
                     <a href="contact.php">Contact</a>
@@ -95,17 +87,7 @@
                         }
                     }
                 ?>
-<!--
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Services</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li>
--->
+
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
