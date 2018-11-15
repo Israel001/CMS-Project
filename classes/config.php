@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 //----------PHPMailer Configuration----------\\
@@ -9,3 +10,15 @@ class Config{
 }
 
 ?>
+=======
+<?php
+
+class Config{
+    const SMTP_HOST = 'YOUR SMTP HOST';
+    const SMTP_PORT = YOUR SMTP PORT;
+    const SMTP_USER = 'YOUR EMAIL ADDRESS';
+    const SMTP_PASS = 'YOUR PASSWORD';
+}
+
+?>
+>>>>>>> 9c2e6fa641469c5b084ab008f37896ed8475a538
